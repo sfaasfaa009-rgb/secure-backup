@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محفظة البيانات الآمنة ومولد QR Code</title>
-    <!-- مكتبة توليد الـ QR Code (تدعم الألوان والشعارات) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
@@ -21,7 +20,7 @@
             margin: 0;
             padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column; 
             align-items: center;
             min-height: 100vh;
         }
@@ -34,6 +33,7 @@
             width: 100%;
             max-width: 500px;
             text-align: center;
+            margin: 20px 0; 
         }
 
         h2 {
@@ -58,7 +58,8 @@
         input[type="password"],
         input[type="tel"],
         input[type="date"],
-        input[type="color"] {
+        input[type="color"],
+        input[type="file"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -111,7 +112,6 @@
             position: relative;
         }
 
-        /* تنسيق الشعار داخل الباركود */
         .qr-logo {
             position: absolute;
             top: 50%;
@@ -135,6 +135,14 @@
             cursor: pointer;
             font-size: 14px;
         }
+
+        /* تنسيق حاوية الإعلان السفلي الخاص بك */
+        .ad-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 15px auto 30px auto;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -142,7 +150,6 @@
 <div class="container">
     <h2>🔒 محفظة البيانات الشخصية الـ آمنة</h2>
     
-    <!-- نموذج إدخال البيانات -->
     <form id="vaultForm" onsubmit="generateSecureQR(event)">
         <div class="form-group">
             <label>البريد الإلكتروني:</label>
@@ -164,7 +171,6 @@
             <input type="date" id="dob" required>
         </div>
 
-        <!-- قسم التخصيص (الألوان والشعار) -->
         <legend style="text-align: right; font-weight: bold; margin-top: 15px; font-size: 14px; color: #777;">🎨 تخصيص مظهر الباركود:</legend>
         <div class="row">
             <div class="form-group">
@@ -182,11 +188,9 @@
             <input type="file" id="logoInput" accept="image/*" onchange="previewLogo(event)">
         </div>
 
-        <!-- زر الحفظ والتوليد -->
         <button type="submit" class="btn-save">💾 Save (حفظ وتوليد الكود)</button>
     </form>
 
-    <!-- قسم عرض النتيجة -->
     <div id="qr-result-section">
         <h3>🎉 تم حفظ ملفك بنجاح!</h3>
         <p style="font-size: 13px; color: #666;">امسح الكود أدناه من أي هاتف آخر لمراجعة معلوماتك فوراً.</p>
@@ -201,10 +205,15 @@
     </div>
 </div>
 
+<!-- حاوية إعلان Adsterra الخاص بك -->
+<div class="ad-container">
+    <script async="async" data-cfasync="false" src="https://pl30224991.effectivecpmnetwork.com/667eab27d23db57e45f6df509573c18b/invoke.js"></script>
+    <div id="container-667eab27d23db57e45f6df509573c18b"></div>
+</div>
+
 <script>
     let logoDataUrl = "";
 
-    // معالجة الشعار المرفوع
     function previewLogo(event) {
         const file = event.target.files[0];
         if (file) {
@@ -216,11 +225,9 @@
         }
     }
 
-    // توليد الباركود المحمي
     function generateSecureQR(event) {
         event.preventDefault();
 
-        // جلب البيانات من الحقول
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const phone = document.getElementById('phone').value;
@@ -229,7 +236,6 @@
         const qrColor = document.getElementById('qrColor').value;
         const bgColor = document.getElementById('bgColor').value;
 
-        // صياغة النص الذي سيحتويه الباركود بشكل منظم وقابل للقراءة عند المسح
         const secureData = `--- ملف البيانات الشخصية ---
 📧 الإيميل: ${email}
 🔑 الباسورد: ${password}
@@ -237,21 +243,18 @@
 📅 الميلاد: ${dob}
 ----------------------------`;
 
-        // تنظيف المكان المخصص للـ QR السابق
         const qrContainer = document.getElementById("qrcode");
         qrContainer.innerHTML = "";
 
-        // توليد الـ QR الجديد باستخدام المكتبة مع الألوان المحددة
         new QRCode(qrContainer, {
             text: secureData,
             width: 200,
             height: 200,
             colorDark: qrColor,
             colorLight: bgColor,
-            correctLevel: QRCode.CorrectLevel.H // مستوى تصحيح عالي للسماح بوضع شعار
+            correctLevel: QRCode.CorrectLevel.H
         });
 
-        // إظهار الشعار فوق الباركود إذا تم رفعه
         const logoImg = document.getElementById("qrLogoPreview");
         if (logoDataUrl) {
             logoImg.src = logoDataUrl;
@@ -260,14 +263,10 @@
             logoImg.style.display = "none";
         }
 
-        // إظهار قسم النتيجة للمستخدم
         document.getElementById("qr-result-section").style.display = "block";
-        
-        // تمرير تلقائي للأسفل لرؤية الكود
         document.getElementById("qr-result-section").scrollIntoView({ behavior: 'smooth' });
     }
 
-    // دالة تحميل الباركود كصورة
     function downloadQR() {
         const qrCanvas = document.querySelector('#qrcode canvas');
         if (qrCanvas) {
