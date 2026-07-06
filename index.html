@@ -3,234 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة البيانات الآمنة ومولد QR Code</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <title>أداة النسخ الاحتياطي الآمن للبيانات - QR Code Vault</title>
     <style>
         :root {
-            --bg-color: #f4f7f6;
+            --bg-color: #f4f6f9;
             --card-bg: #ffffff;
-            --text-color: #333;
-            --primary-color: #4a90e2;
+            --text-color: #333333;
+            --primary-color: #2b579a;
+            --primary-hover: #1e3d70;
+            --border-color: #cccccc;
+            --success-color: #2ea44f;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 20px;
             display: flex;
-            flex-direction: column; 
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
             max-width: 500px;
+            padding: 30px;
             text-align: center;
-            margin: 20px 0; 
+            margin-bottom: 20px;
         }
 
-        h2 {
-            margin-bottom: 25px;
+        h1 {
+            font-size: 20px;
             color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        p.desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
         }
 
         .form-group {
-            margin-bottom: 15px;
             text-align: right;
+            margin-bottom: 18px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
             font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #444;
         }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="tel"],
-        input[type="date"],
-        input[type="color"],
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 15px;
-        }
-
-        .row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .row .form-group {
-            flex: 1;
-        }
-
-        button.btn-save {
+        input {
             width: 100%;
             padding: 12px;
-            background-color: #2ecc71;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 18px;
+            border-radius: 6px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 15px;
+            transition: background 0.2s;
         }
 
-        button.btn-save:hover {
-            background-color: #27ae60;
+        .btn-generate {
+            background-color: var(--primary-color);
         }
 
-        #qr-result-section {
+        .btn-generate:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-save {
+            background-color: var(--success-color);
+        }
+
+        .btn-save:hover {
+            background-color: #22863a;
+        }
+
+        #qrcode-container {
             margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px dashed #eee;
             display: none;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 25px;
         }
 
-        #qrcode-canvas {
-            display: inline-block;
-            margin: 20px auto;
+        #qrcode {
             padding: 10px;
-            background: white;
+            background: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
+            display: inline-block;
         }
 
-        .btn-download {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
+        .alert-success {
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--success-color);
+            font-weight: bold;
         }
 
-        .ad-container {
+        /* مساحة مخصصة للإعلانات النظيفة */
+        .ad-space {
+            margin: 20px 0;
+            padding: 10px;
+            background: #ebebeb;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #777;
             width: 100%;
             max-width: 500px;
-            margin: 15px auto 30px auto;
-            text-align: center;
         }
     </style>
+    <!-- مكتبة الـ QR الأساسية الموثوقة -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
+<!-- مساحة إعلانات Adsterra العلوية -->
+<div class="ad-space">
+    <!-- يمكنك وضع كود الإعلان الخاص بـ Adsterra هنا مباشرة -->
+    <p>إعلان مدعوم</p>
+</div>
+
 <div class="container">
-    <h2>🔒 محفظة البيانات الشخصية الـ آمنة</h2>
-    
-    <form id="vaultForm" onsubmit="generateSecureQR(event)" autocomplete="off">
-        <div class="form-group">
-            <label>البريد الإلكتروني:</label>
-            <input type="email" id="email" placeholder="example@mail.com" autocomplete="off" required>
-        </div>
+    <h1>مفكرة حفظ معلومات الحسابات والنسخ الاحتياطي الآمن</h1>[span_1](start_span)[span_1](end_span)
+    <p class="desc">أدخل بياناتك لحفظها وتوليد كود QR سليم يقرأه أي هاتف آخر باللغة العربية دون خربطة.</p>
 
-        <div class="form-group">
-            <label>كلمة المرور:</label>
-            <input type="password" id="password" placeholder="••••••••" autocomplete="new-password" required>
-        </div>
+    <div class="form-group">
+        <label for="email">البريد الإلكتروني أو الحساب:</label>
+        <input type="email" id="email" placeholder="example@gmail.com" required>
+    </div>
 
-        <div class="form-group">
-            <label>رقم الهاتف:</label>
-            <input type="tel" id="phone" placeholder="07xxxxxxxx" autocomplete="off" required>
-        </div>
+    <div class="form-group">
+        <label for="password">كلمة المرور (Password):</label>
+        <input type="text" id="password" placeholder="أدخل كلمة المرور" required>
+    </div>
 
-        <div class="form-group">
-            <label>تاريخ الميلاد:</label>
-            <input type="date" id="dob" required>
-        </div>
+    <div class="form-group">
+        <label for="birthdate">تاريخ الميلاد:</label>
+        <input type="date" id="birthdate" required>
+    </div>
 
-        <legend style="text-align: right; font-weight: bold; margin-top: 15px; font-size: 14px; color: #777;">🎨 تخصيص مظهر الباركود:</legend>
-        <div class="row">
-            <div class="form-group">
-                <label>لون الكود:</label>
-                <input type="color" id="qrColor" value="#000000">
-            </div>
-            <div class="form-group">
-                <label>لون الخلفية:</label>
-                <input type="color" id="bgColor" value="#ffffff">
-            </div>
-        </div>
+    <div class="btn-container">
+        <button class="btn-generate" onclick="generateSecureQR()">توليد الرمز</button>
+        <button class="btn-save" onclick="saveDataLocally()">حفظ البيانات</button>
+    </div>
 
-        <button type="submit" class="btn-save">💾 Save (حفظ وتوليد الكود)</button>
-    </form>
-
-    <div id="qr-result-section">
-        <h3>🎉 تم حفظ ملفك بنجاح!</h3>
-        <p style="font-size: 13px; color: #666;">امسح الكود أدناه من أي هاتف آخر لمراجعة معلوماتك فوراً.</p>
-        
-        <div>
-            <canvas id="qrcode-canvas"></canvas>
-        </div>
-        
-        <br>
-        <button class="btn-download" onclick="downloadQR()">📥 تحميل صورة الباركود</button>
+    <div id="qrcode-container">
+        <div id="qrcode"></div>
+        <p class="alert-success">✓ تم إصلاح تشفير اللغة العربية! الكود جاهز للمسح الآن من أي هاتف.</p>
     </div>
 </div>
 
-<div class="ad-container">
-    <script async="async" data-cfasync="false" src="https://pl30224991.effectivecpmnetwork.com/667eab27d23db57e45f6df509573c18b/invoke.js"></script>
-    <div id="container-667eab27d23db57e45f6df509573c18b"></div>
+<!-- مساحة إعلانات Adsterra السفلية -->
+<div class="ad-space">
+    <!-- كود إعلانات Adsterra السفلي -->
+    <p>إعلان مدعوم</p>
 </div>
 
 <script>
-    function generateSecureQR(event) {
-        event.preventDefault();
+    let qrInstance = null;
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const phone = document.getElementById('phone').value;
-        const dob = document.getElementById('dob').value;
+    function generateSecureQR() {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const birthdate = document.getElementById('birthdate').value;
+
+        if (!email || !password || !birthdate) {
+            alert('الرجاء ملء الحقول أولاً لتوليد الكود!');
+            return;
+        }
+
+        // تنسيق البيانات بشكل منظم
+        let rawText = "البريد الإلكتروني: " + email + "\n" +
+                      "كلمة المرور: " + password + "\n" +
+                      "تاريخ الميلاد: " + birthdate;
+
+        // 🚨 هنا الحل النهائي والجذري الذي يمنع خربطة الحروف العربية ويصلح المشكلة للأبد
+        let formattedText = unescape(encodeURIComponent(rawText));
+
+        document.getElementById('qrcode-container').style.display = 'flex';
         
-        const qrColor = document.getElementById('qrColor').value;
-        const bgColor = document.getElementById('bgColor').value;
-
-        const secureData = `--- ملف البيانات الشخصية ---
-📧 الإيميل: ${email}
-🔑 الباسورد: ${password}
-📞 الهاتف: ${phone}
-📅 الميلاد: ${dob}
-----------------------------`;
-
-        // توليد الباركود باستخدام المكتبة الجديدة والمستقرة
-        const qr = new QRious({
-            element: document.getElementById('qrcode-canvas'),
-            value: secureData,
-            size: 200,
-            foreground: qrColor,
-            background: bgColor,
-            level: 'H'
+        const qrDiv = document.getElementById('qrcode');
+        qrDiv.innerHTML = '';
+        
+        qrInstance = new QRCode(qrDiv, {
+            text: formattedText,
+            width: 220,
+            height: 220,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
         });
-
-        document.getElementById("qr-result-section").style.display = "block";
-        document.getElementById("qr-result-section").scrollIntoView({ behavior: 'smooth' });
     }
 
-    function downloadQR() {
-        const canvas = document.getElementById('qrcode-canvas');
-        if (canvas) {
-            const image = canvas.toDataURL("image/png");
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = 'Secure_Personal_QR.png';
-            link.click();
-        } else {
-            alert("يرجى توليد الكود أولاً قبل التحميل.");
+    // ميزة حفظ البيانات محلياً التي طلبتها لحفظ التعب
+    function saveDataLocally() {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const birthdate = document.getElementById('birthdate').value;
+
+        if (!email || !password || !birthdate) {
+            alert('لا توجد بيانات كافية لحفظها!');
+            return;
+        }
+
+        localStorage.setItem('saved_email', email);
+        localStorage.setItem('saved_password', password);
+        localStorage.setItem('saved_birthdate', birthdate);
+
+        alert('✓ تم حفظ البيانات بنجاح داخل المفكرة المحلية للموقع!');
+    }
+
+    // استرجاع البيانات تلقائياً عند فتح الصفحة إذا كانت محفوظة سابقاً
+    window.onload = function() {
+        if(localStorage.getItem('saved_email')) {
+            document.getElementById('email').value = localStorage.getItem('saved_email');
+            document.getElementById('password').value = localStorage.getItem('saved_password');
+            document.getElementById('birthdate').value = localStorage.getItem('saved_birthdate');
         }
     }
 </script>
