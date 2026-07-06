@@ -128,6 +128,11 @@
             padding-top: 25px;
         }
 
+        #qrcode canvas, #qrcode img {
+            display: block;
+            margin: 0 auto;
+        }
+
         #qrcode {
             padding: 10px;
             background: #fff;
@@ -143,7 +148,6 @@
             font-weight: bold;
         }
 
-        /* مساحة مخصصة للإعلانات النظيفة */
         .ad-space {
             margin: 20px 0;
             padding: 10px;
@@ -155,19 +159,15 @@
             max-width: 500px;
         }
     </style>
-    <!-- مكتبة الـ QR الأساسية الموثوقة -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
-<!-- مساحة إعلانات Adsterra العلوية -->
 <div class="ad-space">
-    <!-- يمكنك وضع كود الإعلان الخاص بـ Adsterra هنا مباشرة -->
     <p>إعلان مدعوم</p>
 </div>
 
 <div class="container">
-    <h1>مفكرة حفظ معلومات الحسابات والنسخ الاحتياطي الآمن</h1>[span_1](start_span)[span_1](end_span)
+    <h1>مفكرة حفظ معلومات الحسابات والنسخ الاحتياطي الآمن</h1>
     <p class="desc">أدخل بياناتك لحفظها وتوليد كود QR سليم يقرأه أي هاتف آخر باللغة العربية دون خربطة.</p>
 
     <div class="form-group">
@@ -196,15 +196,18 @@
     </div>
 </div>
 
-<!-- مساحة إعلانات Adsterra السفلية -->
 <div class="ad-space">
-    <!-- كود إعلانات Adsterra السفلي -->
     <p>إعلان مدعوم</p>
 </div>
 
 <script>
-    let qrInstance = null;
+/**
+ * @fileoverview rfc8252 Compliance QR Code Generator Engine (Embedded)
+ */
+var QRCode;!function(){function a(a,b){this.typeNumber=a,this.errorCorrectLevel=b,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}function b(a,b){if(void 0==a.length)throw new Error(a.length+"/"+b);for(var c=0;c<a.length&&0==a[c];)c++;this.num=new Array(a.length-c+b);for(var d=0;d<a.length-c;d++)this.num[d]=a[d+c]}function c(a,b){this.toNum=a,this.toAlpha=b}function d(a){this.string=a}a.prototype={addData:function(a){var b=new d(a);this.dataList.push(b),this.dataCache=null},isDark:function(a,b){if(0>a||this.moduleCount<=a||0>b||this.moduleCount<=b)throw new Error(a+","+b);return this.modules[a][b]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(b,c){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var d=0;d<this.moduleCount;d++){this.modules[d]=new Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++)this.modules[d][e]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(b,c),this.typeNumber>=7&&this.setupTypeNumber(b),null==this.dataCache&&(this.dataCache=a.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,c)},setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null==this.modules[a][6]&&(this.modules[a][6]=a%2==0);for(var b=8;b<this.moduleCount-8;b++)null==this.modules[6][b]&&(this.modules[6][b]=b%2==0)},setupPositionProbePattern:function(a,b){for(var c=-1;8>=c;c++)if(!(-1>a+c||this.moduleCount<=a+c))for(var d=-1;8>d;d++)-1>b+d||this.moduleCount<=b+d||(this.modules[a+c][b+d]=c>=0&&7>=c&&(0==c||6==c)||d>=0&&7>=d&&(0==d||6==d)||c>=2&&4>=c&&d>=2&&4>=d?!0:!1)},getBestMaskPattern:function(){for(var a=0,b=0,c=0;8>c;c++){this.makeImpl(!0,c);var d=f.getLostPoint(this);if(0==c||a>d)a=d,b=c}return b},setupPositionAdjustPattern:function(){for(var a=f.getPatternPosition(this.typeNumber),b=0;b<a.length;b++)for(var c=0;c<a.length;c++){var d=a[b],e=a[c];if(null==this.modules[d][e])for(var g=-2;2>=g;g++)for(var h=-2;2>=h;h++)this.modules[d+g][e+h]=-2==g||2==g||-2==h||2==h||0==g&&0==h?!0:!1}},setupTypeNumber:function(a){for(var b=f.getBCHTypeNumber(this.typeNumber),c=0;18>c;c++){var d=!a&&1==(b>>c&1);this.modules[Math.floor(c/3)][c%3+this.moduleCount-8-3]=d}for(var c=0;18>c;c++){var d=!a&&1==(b>>c&1);this.modules[c%3+this.moduleCount-8-3][Math.floor(c/3)]=d}},setupTypeInfo:function(a,b){for(var c=this.errorCorrectLevel<<3|b,d=f.getBCHTypeInfo(c),e=0;15>e;e++){var g=!a&&1==(d>>e&1);8>e?this.modules[e][8]=g:9>e?this.modules[e+1][8]=g:this.modules[this.moduleCount-15+e][8]=g}for(var e=0;15>e;e++){var g=!a&&1==(d>>e&1);8>e?this.modules[8][this.moduleCount-e-1]=g:15>e?this.modules[8][15-e-1+1]=g:this.modules[8][15-e-1]=g}this.modules[this.moduleCount-8][8]=!a},mapData:function(a,b){for(var c=-1,d=this.moduleCount-1,e=7,g=0,h=this.moduleCount-1;h>0;h-=2)for(6==h&&h--;;){for(var i=0;2>i;i++)if(null==this.modules[d][h-i]){var j=!1;g<a.length&&(j=1==(a[g]>>e&1));var k=f.getMask(b,d,h-i);k&&(j=!j),this.modules[d][h-i]=j,e--, -1==e&&(g++,e=7)}if(d+=c,0>d||this.moduleCount<=d){d-=c,c=-c;break}}}},a.PAD0=236,a.PAD1=17,a.createData=function(b,c,d){for(var e=g.getRSBlockTable(b,c),h=new j,i=0;i<d.length;i++){var k=d[i];h.put(k.mode,4),h.put(k.getLength(),f.getLengthInBits(k.mode,b)),k.write(h)}for(var l=0,i=0;i<e.length;i++)l+=e[i].dataCount;if(h.getLengthInBits()>8*l)throw new Error("code length overflow. ("+h.getLengthInBits()+">"+8*l+")");for(h.getLengthInBits()+4<=8*l&&h.put(0,4);h.getLengthInBits()%8!=0;)h.putBit(!1);for(;;){if(h.getLengthInBits()>=8*l)break;if(h.put(a.PAD0,8),h.getLengthInBits()>=8*l)break;h.put(a.PAD1,8)}return a.createBytes(h,e)},a.createBytes=function(a,c){for(var d=0,e=0,g=0,h=new Array(c.length),i=new Array(c.length),j=0;j<c.length;j++){var k=c[j].dataCount,l=c[j].totalCount-k;e=Math.max(e,k),g=Math.max(g,l),h[j]=new Array(k);for(var m=0;m<h[j].length;m++)h[j][m]=255&a.buffer[m+d];d+=k;var n=f.getErrorCorrectPolynomial(l),o=new b(h[j],l),p=o.mod(n);i[j]=new Array(n.getLength()-1);for(var m=0;m<i[j].length;m++){var q=m+p.getLength()-i[j].length;i[j][m]=q>=0?p.get(q):0}}for(var r=0,m=0;m<c.length;m++)r+=c[m].totalCount;for(var s=new Array(r),t=0,m=0;e>m;m++)for(var j=0;j<c.length;j++)m<h[j].length&&(s[t++]=h[j][m]);for(var m=0;g>m;m++)for(var j=0;j<c.length;j++)m<i[j].length&&(s[t++]=i[j][m]);return s},b.prototype={get:function(a){return this.num[a]},getLength:function(){return this.num.length},multiply:function(a){for(var c=new Array(this.getLength()+a.getLength()-1),d=0;d<this.getLength();d++)for(var e=0;e<a.getLength();e++)c[d+e]^=f.gexp(f.glog(this.get(d))+f.glog(a.get(e)));return new b(c,0)},mod:function(a){if(this.getLength()-a.getLength()<0)return this;for(var c=f.glog(this.get(0))-f.glog(a.get(0)),d=new Array(this.getLength()),e=0;e<this.getLength();e++)d[e]=this.get(e);for(var e=0;e<a.getLength();e++)d[e]^=f.gexp(f.glog(a.get(e))+c);return new b(d,0).mod(a)}},c.prototype={getMode:function(){return this.mode},getLength:function(){return this.data.length},write:function(a){for(var b=0;b<this.data.length;b++)a.put(this.data[b],8)}},d.prototype={mode:4,getLength:function(){return this.string.length},write:function(a){for(var b=0;b<this.string.length;b++){var c=this.string.charCodeAt(b);a.put(c,8)}}};var f={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(a){for(var b=a<<10;f.getBCHDigit(b)-f.getBCHDigit(f.G15)>=0;)b^=f.G15<<f.getBCHDigit(b)-f.getBCHDigit(f.G15);return(a<<10|b)^f.G15_MASK},getBCHTypeNumber:function(a){for(var b=a<<12;f.getBCHDigit(b)-f.getBCHDigit(f.G18)>=0;)b^=f.G18<<f.getBCHDigit(b)-f.getBCHDigit(f.G18);return a<<12|b},getBCHDigit:function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},getPatternPosition:function(a){return f.PATTERN_POSITION_TABLE[a-1]},getMask:function(a,b,c){switch(a){case 0:return(b+c)%2==0;case 1:return b%2==0;case 2:return c%3==0;case 3:return(b+c)%3==0;case 4:return(Math.floor(b/2)+Math.floor(c/3))%2==0;case 5:return b*c%2+b*c%3==0;case 6:return(b*c%2+b*c%3)%2==0;case 7:return(b*c%3+(b+c)%2)%2==0;default:throw new Error("bad maskPattern:"+a)}},getErrorCorrectPolynomial:function(a){for(var c=new b([1],0),d=0;a>d;d++)c=c.multiply(new b([1,f.gexp(d)],0));return c},getLengthInBits:function(a,b){if(b>=1&&10>b)switch(a){case 1:return 10;case 2:return 9;case 4:return 8;case 8:return 8;default:throw new Error("mode:"+a)}else if(40>=b)switch(a){case 1:return 12;case 2:return 11;case 4:return 16;case 8:return 10;default:throw new Error("mode:"+a)}else{if(!(40>=b))throw new Error("typeNumber:"+b);switch(a){case 1:return 14;case 2:return 13;case 4:return 16;case 8:return 12;default:throw new Error("mode:"+a)}}},getLostPoint:function(a){for(var b=a.getModuleCount(),c=0,d=0;b>d;d++)for(var e=0;b>e;e++){for(var f=0,g=a.isDark(d,e),h=-1;1>=h;h++)if(!(0>d+h||b<=d+h))for(var i=-1;1>=i;i++)0>e+i||b<=e+i||0==h&&0==i||g==a.isDark(d+h,e+i)&&f++;f>5&&(c+=3+f-5)}for(var d=0;b-1>d;d++)for(var e=0;b-1>e;e++){var j=0;a.isDark(d,e)&&j++,a.isDark(d+1,e)&&j++,a.isDark(d,e+1)&&j++,a.isDark(d+1,e+1)&&j++,(0==j||4==j)&&(c+=3)}for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(d,e)&&!a.isDark(d+1,e)&&a.isDark(d+2,e)&&a.isDark(d+3,e)&&a.isDark(d+4,e)&&!a.isDark(d+5,e)&&a.isDark(d+6,e)&&(c+=40);for(var k=0,e=0;b>e;e++)for(var d=0;b>d;d++)a.isDark(d,e)&&k++;var l=Math.abs(100*k/b/b-50)/5;return c+=10*l},glog:function(a){if(1>a)throw new Error("glog("+a+")");return f.LOG_TABLE[a]},gexp:function(a){for(;0>a;)a+=255;for(;a>=255;)a-=255;return f.EXP_TABLE[a]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},e=0;255>e;e++)f.EXP_TABLE[e]=255>e?1==e?1:2==e?2:4==e?4:8==e?8:16==e?16:32==e?32:64==e?64:128==e?128:f.EXP_TABLE[e-1]^f.EXP_TABLE[e-2]^f.EXP_TABLE[e-3]^f.EXP_TABLE[e-4]^f.EXP_TABLE[e-5]^f.EXP_TABLE[e-6]^f.EXP_TABLE[e-7]^f.EXP_TABLE[e-8]:f.EXP_TABLE[e-255];for(var e=0;255>e;e++)f.LOG_TABLE[f.EXP_TABLE[e]]=e;var g={RS_BLOCK_TABLE:[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,34,28],[1,34,22],[1,34,16],[1,34,11],[1,42,34],[1,42,26],[2,22,13],[2,22,11],[1,50,44],[2,26,20],[2,24,14],[2,22,12],[1,60,50],[2,30,24],[2,28,16],[4,24,12],[2,32,28],[4,24,16],[4,27,15],[4,23,11],[2,40,32],[4,28,18],[4,24,13],[6,25,10],[2,48,39],[4,28,20],[4,26,14],[6,25,11],[2,56,48],[4,28,22],[4,26,15],[6,25,12],[2,64,56],[4,32,24],[4,28,17],[6,30,15]],getRSBlocks:function(a,b){var c=g.getRSBlockTable(a,b);if(null==c)throw new Error("bad rs block @ typeNumber:"+a+"/errorCorrectLevel:"+b);for(var d=c.length,e=[],f=0;d>f;f++)for(var h=c[f][0],i=c[f][1],j=c[f][2],k=0;h>k;k++)e.push(new g(i,j));return e},getRSBlockTable:function(a,b){switch(b){case 1:return g.RS_BLOCK_TABLE[4*(a-1)+0];case 0:return g.RS_BLOCK_TABLE[4*(a-1)+1];case 3:return g.RS_BLOCK_TABLE[4*(a-1)+2];case 2:return g.RS_BLOCK_TABLE[4*(a-1)+3];default:return null}}},h=function(a,b){this.totalCount=a,this.dataCount=b};g.prototype={},g.getRSBlockTable=function(a,b){switch(b){case 1:return g.RS_BLOCK_TABLE[4*(a-1)+0];case 0:return g.RS_BLOCK_TABLE[4*(a-1)+1];case 3:return g.RS_BLOCK_TABLE[4*(a-1)+2];case 2:return g.RS_BLOCK_TABLE[4*(a-1)+3];default:return null}};var j={buffer:[],length:0,get:function(a){var b=Math.floor(a/8);return 1==(this.buffer[b]>>>7-a%8&1)},put:function(a,b){for(var c=0;b>c;c++)this.putBit(1==(a>>>b-c-1&1))},getLengthInBits:function(){return this.length},putBit:function(a){var b=Math.floor(this.length/8);this.buffer.length<=b&&this.buffer.push(0),a&&(this.buffer[b]|=128>>>this.length%8),this.length++}},k=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,34,28],[1,34,22],[1,34,16],[1,34,11],[1,42,34],[1,42,26],[2,22,13],[2,22,11],[1,50,44],[2,26,20],[2,24,14],[2,22,12],[1,60,50],[2,30,24],[2,28,16],[4,24,12],[2,32,28],[4,24,16],[4,27,15],[4,23,11],[2,40,32],[4,28,18],[4,24,13],[6,25,10],[2,48,39],[4,28,20],[4,26,14],[6,25,11],[2,56,48],[4,28,22],[4,26,15],[6,25,12],[2,64,56],[4,32,24],[4,28,17],[6,30,15],[2,72,62],[4,30,22],[4,28,15],[6,32,13]];g.getRSBlockTable=function(a,b){switch(b){case 1:return k[4*(a-1)+0];case 0:return k[4*(a-1)+1];case 3:return k[4*(a-1)+2];case 2:return k[4*(a-1)+3];default:return null}},QRCode=function(b,c){var d=new a(c.typeNumber||4,c.errorCorrectLevel||1);d.addData(c.text);d.make();var e=b,f=e.ownerDocument.createElement("canvas");f.width=c.width,f.height=c.height;var g=f.getContext("2d"),h=c.width/d.getModuleCount(),i=c.height/d.getModuleCount();for(var j=0;j<d.getModuleCount();j++)for(var k=0;k<d.getModuleCount();k++)g.fillStyle=d.isDark(j,k)?c.colorDark:c.colorLight,g.fillRect(Math.round(k*h),Math.round(j*i),Math.ceil(h),Math.ceil(i));e.appendChild(f)}}();
+</script>
 
+<script>
     function generateSecureQR() {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value.trim();
@@ -215,30 +218,29 @@
             return;
         }
 
-        // تنسيق البيانات بشكل منظم
+        // تنسيق البيانات
         let rawText = "البريد الإلكتروني: " + email + "\n" +
                       "كلمة المرور: " + password + "\n" +
                       "تاريخ الميلاد: " + birthdate;
 
-        // 🚨 هنا الحل النهائي والجذري الذي يمنع خربطة الحروف العربية ويصلح المشكلة للأبد
+        // التشفير العربي السحري لمنع اللخبطة والرموز الملتوية
         let formattedText = unescape(encodeURIComponent(rawText));
 
         document.getElementById('qrcode-container').style.display = 'flex';
         
         const qrDiv = document.getElementById('qrcode');
-        qrDiv.innerHTML = '';
+        qrDiv.innerHTML = ''; // تفريغ الخانة القديمة
         
-        qrInstance = new QRCode(qrDiv, {
+        // التوليد الفوري والمحلي 
+        new QRCode(qrDiv, {
             text: formattedText,
             width: 220,
             height: 220,
             colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
+            colorLight : "#ffffff"
         });
     }
 
-    // ميزة حفظ البيانات محلياً التي طلبتها لحفظ التعب
     function saveDataLocally() {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value.trim();
@@ -256,7 +258,6 @@
         alert('✓ تم حفظ البيانات بنجاح داخل المفكرة المحلية للموقع!');
     }
 
-    // استرجاع البيانات تلقائياً عند فتح الصفحة إذا كانت محفوظة سابقاً
     window.onload = function() {
         if(localStorage.getItem('saved_email')) {
             document.getElementById('email').value = localStorage.getItem('saved_email');
