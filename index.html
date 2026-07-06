@@ -3,34 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نسخ احتياطي آمن QR</title>
-    <style>
-        body { font-family: Arial; background: #f4f7f6; text-align: center; padding: 20px; }
-        .box { max-width: 400px; background: white; margin: 40px auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        textarea { width: 100%; height: 80px; margin: 10px 0; padding: 10px; box-sizing: border-box; }
-        button { background: #2ecc71; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; cursor: pointer; }
-        #qrcode { margin-top: 20px; display: flex; justify-content: center; }
-    </style>
+    <title>محفظة البيانات الآمنة ومولد QR Code</title>
+    <!-- مكتبة توليد الـ QR Code (تدعم الألوان والشعارات) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --primary-color: #4a90e2;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="color"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .row .form-group {
+            flex: 1;
+        }
+
+        button.btn-save {
+            width: 100%;
+            padding: 12px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 15px;
+        }
+
+        button.btn-save:hover {
+            background-color: #27ae60;
+        }
+
+        #qr-result-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #eee;
+            display: none;
+        }
+
+        #qrcode {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        /* تنسيق الشعار داخل الباركود */
+        .qr-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 6px;
+            padding: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .btn-download {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-<div class="box">
-    <h2>🔐 نسخ احتياطي آمن (QR)</h2>
-    <p>أدخل بياناتك السرية لتوليد كود QR وحفظه بجهازك.</p>
-    <textarea id="txt" placeholder="اكتب الحسابات أو الأكواد هنا..."></textarea>
-    <button onclick="makeQR()">توليد كود QR</button>
-    <div id="qrcode"></div>
+
+<div class="container">
+    <h2>🔒 محفظة البيانات الشخصية الـ آمنة</h2>
+    
+    <!-- نموذج إدخال البيانات -->
+    <form id="vaultForm" onsubmit="generateSecureQR(event)">
+        <div class="form-group">
+            <label>البريد الإلكتروني:</label>
+            <input type="email" id="email" placeholder="example@mail.com" required>
+        </div>
+
+        <div class="form-group">
+            <label>كلمة المرور:</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+
+        <div class="form-group">
+            <label>رقم الهاتف:</label>
+            <input type="tel" id="phone" placeholder="07xxxxxxxx" required>
+        </div>
+
+        <div class="form-group">
+            <label>تاريخ الميلاد:</label>
+            <input type="date" id="dob" required>
+        </div>
+
+        <!-- قسم التخصيص (الألوان والشعار) -->
+        <legend style="text-align: right; font-weight: bold; margin-top: 15px; font-size: 14px; color: #777;">🎨 تخصيص مظهر الباركود:</legend>
+        <div class="row">
+            <div class="form-group">
+                <label>لون الكود:</label>
+                <input type="color" id="qrColor" value="#000000">
+            </div>
+            <div class="form-group">
+                <label>لون الخلفية:</label>
+                <input type="color" id="bgColor" value="#ffffff">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>إضافة شعار (صورة صغيرة):</label>
+            <input type="file" id="logoInput" accept="image/*" onchange="previewLogo(event)">
+        </div>
+
+        <!-- زر الحفظ والتوليد -->
+        <button type="submit" class="btn-save">💾 Save (حفظ وتوليد الكود)</button>
+    </form>
+
+    <!-- قسم عرض النتيجة -->
+    <div id="qr-result-section">
+        <h3>🎉 تم حفظ ملفك بنجاح!</h3>
+        <p style="font-size: 13px; color: #666;">امسح الكود أدناه من أي هاتف آخر لمراجعة معلوماتك فوراً.</p>
+        
+        <div style="position: relative; display: inline-block;">
+            <div id="qrcode"></div>
+            <img id="qrLogoPreview" class="qr-logo" alt="logo">
+        </div>
+        
+        <br>
+        <button class="btn-download" onclick="downloadQR()">📥 تحميل صورة الباركود</button>
+    </div>
 </div>
+
 <script>
-function makeQR() {
-    var qrDiv = document.getElementById("qrcode");
-    qrDiv.innerHTML = "";
-    var data = document.getElementById("txt").value;
-    if(!data.trim()) { alert("اكتب شيئاً أولاً!"); return; }
-    new QRCode(qrDiv, { text: data, width: 180, height: 180 });
-}
-</script> 
-<script async="async" data-cfasync="false" src="https://pl30224991.effectivecpmnetwork.com/667eab27d23db57e45f6df509573c18b/invoke.js"></script>
-<div id="container-667eab27d23db57e45f6df509573c18b"></div>
+    let logoDataUrl = "";
+
+    // معالجة الشعار المرفوع
+    function previewLogo(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                logoDataUrl = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // توليد الباركود المحمي
+    function generateSecureQR(event) {
+        event.preventDefault();
+
+        // جلب البيانات من الحقول
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const phone = document.getElementById('phone').value;
+        const dob = document.getElementById('dob').value;
+        
+        const qrColor = document.getElementById('qrColor').value;
+        const bgColor = document.getElementById('bgColor').value;
+
+        // صياغة النص الذي سيحتويه الباركود بشكل منظم وقابل للقراءة عند المسح
+        const secureData = `--- ملف البيانات الشخصية ---
+📧 الإيميل: ${email}
+🔑 الباسورد: ${password}
+📞 الهاتف: ${phone}
+📅 الميلاد: ${dob}
+----------------------------`;
+
+        // تنظيف المكان المخصص للـ QR السابق
+        const qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = "";
+
+        // توليد الـ QR الجديد باستخدام المكتبة مع الألوان المحددة
+        new QRCode(qrContainer, {
+            text: secureData,
+            width: 200,
+            height: 200,
+            colorDark: qrColor,
+            colorLight: bgColor,
+            correctLevel: QRCode.CorrectLevel.H // مستوى تصحيح عالي للسماح بوضع شعار
+        });
+
+        // إظهار الشعار فوق الباركود إذا تم رفعه
+        const logoImg = document.getElementById("qrLogoPreview");
+        if (logoDataUrl) {
+            logoImg.src = logoDataUrl;
+            logoImg.style.display = "block";
+        } else {
+            logoImg.style.display = "none";
+        }
+
+        // إظهار قسم النتيجة للمستخدم
+        document.getElementById("qr-result-section").style.display = "block";
+        
+        // تمرير تلقائي للأسفل لرؤية الكود
+        document.getElementById("qr-result-section").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // دالة تحميل الباركود كصورة
+    function downloadQR() {
+        const qrCanvas = document.querySelector('#qrcode canvas');
+        if (qrCanvas) {
+            const image = qrCanvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.href = image;
+            link.download = 'Secure_Personal_QR.png';
+            link.click();
+        } else {
+            alert("يرجى توليد الكود أولاً قبل التحميل.");
+        }
+    }
+</script>
+
 </body>
 </html>
