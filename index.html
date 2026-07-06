@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محفظة البيانات الآمنة ومولد QR Code</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <style>
         :root {
             --bg-color: #f4f7f6;
@@ -102,28 +102,13 @@
             display: none;
         }
 
-        #qrcode {
+        #qrcode-canvas {
             display: inline-block;
             margin: 20px auto;
             padding: 10px;
             background: white;
             border: 1px solid #ddd;
             border-radius: 8px;
-            position: relative;
-        }
-
-        .qr-logo {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 6px;
-            padding: 2px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            display: none;
         }
 
         .btn-download {
@@ -136,7 +121,6 @@
             font-size: 14px;
         }
 
-        /* تنسيق حاوية الإعلان السفلي الخاص بك */
         .ad-container {
             width: 100%;
             max-width: 500px;
@@ -150,20 +134,20 @@
 <div class="container">
     <h2>🔒 محفظة البيانات الشخصية الـ آمنة</h2>
     
-    <form id="vaultForm" onsubmit="generateSecureQR(event)">
+    <form id="vaultForm" onsubmit="generateSecureQR(event)" autocomplete="off">
         <div class="form-group">
             <label>البريد الإلكتروني:</label>
-            <input type="email" id="email" placeholder="example@mail.com" required>
+            <input type="email" id="email" placeholder="example@mail.com" autocomplete="off" required>
         </div>
 
         <div class="form-group">
             <label>كلمة المرور:</label>
-            <input type="password" id="password" placeholder="••••••••" required>
+            <input type="password" id="password" placeholder="••••••••" autocomplete="new-password" required>
         </div>
 
         <div class="form-group">
             <label>رقم الهاتف:</label>
-            <input type="tel" id="phone" placeholder="07xxxxxxxx" required>
+            <input type="tel" id="phone" placeholder="07xxxxxxxx" autocomplete="off" required>
         </div>
 
         <div class="form-group">
@@ -183,11 +167,6 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label>إضافة شعار (صورة صغيرة):</label>
-            <input type="file" id="logoInput" accept="image/*" onchange="previewLogo(event)">
-        </div>
-
         <button type="submit" class="btn-save">💾 Save (حفظ وتوليد الكود)</button>
     </form>
 
@@ -195,9 +174,8 @@
         <h3>🎉 تم حفظ ملفك بنجاح!</h3>
         <p style="font-size: 13px; color: #666;">امسح الكود أدناه من أي هاتف آخر لمراجعة معلوماتك فوراً.</p>
         
-        <div style="position: relative; display: inline-block;">
-            <div id="qrcode"></div>
-            <img id="qrLogoPreview" class="qr-logo" alt="logo">
+        <div>
+            <canvas id="qrcode-canvas"></canvas>
         </div>
         
         <br>
@@ -205,26 +183,12 @@
     </div>
 </div>
 
-<!-- حاوية إعلان Adsterra الخاص بك -->
 <div class="ad-container">
     <script async="async" data-cfasync="false" src="https://pl30224991.effectivecpmnetwork.com/667eab27d23db57e45f6df509573c18b/invoke.js"></script>
     <div id="container-667eab27d23db57e45f6df509573c18b"></div>
 </div>
 
 <script>
-    let logoDataUrl = "";
-
-    function previewLogo(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                logoDataUrl = e.target.result;
-            }
-            reader.readAsDataURL(file);
-        }
-    }
-
     function generateSecureQR(event) {
         event.preventDefault();
 
@@ -243,34 +207,24 @@
 📅 الميلاد: ${dob}
 ----------------------------`;
 
-        const qrContainer = document.getElementById("qrcode");
-        qrContainer.innerHTML = "";
-
-        new QRCode(qrContainer, {
-            text: secureData,
-            width: 200,
-            height: 200,
-            colorDark: qrColor,
-            colorLight: bgColor,
-            correctLevel: QRCode.CorrectLevel.H
+        // توليد الباركود باستخدام المكتبة الجديدة والمستقرة
+        const qr = new QRious({
+            element: document.getElementById('qrcode-canvas'),
+            value: secureData,
+            size: 200,
+            foreground: qrColor,
+            background: bgColor,
+            level: 'H'
         });
-
-        const logoImg = document.getElementById("qrLogoPreview");
-        if (logoDataUrl) {
-            logoImg.src = logoDataUrl;
-            logoImg.style.display = "block";
-        } else {
-            logoImg.style.display = "none";
-        }
 
         document.getElementById("qr-result-section").style.display = "block";
         document.getElementById("qr-result-section").scrollIntoView({ behavior: 'smooth' });
     }
 
     function downloadQR() {
-        const qrCanvas = document.querySelector('#qrcode canvas');
-        if (qrCanvas) {
-            const image = qrCanvas.toDataURL("image/png");
+        const canvas = document.getElementById('qrcode-canvas');
+        if (canvas) {
+            const image = canvas.toDataURL("image/png");
             const link = document.createElement('a');
             link.href = image;
             link.download = 'Secure_Personal_QR.png';
